@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.myweather.model.Repository
 import com.example.myweather.model.RepositoryImpl
-import com.example.myweather.model.Weather
 import java.lang.Thread.sleep
 
 class MainViewModel(
@@ -14,11 +13,16 @@ class MainViewModel(
 ) : ViewModel() {
     fun getData() = liveDataToObserver
 
-    fun getWeather() {
+    fun getWeatherRussia() = getWeather(true)
+    fun getWeatherWorld() = getWeather(false)
+
+    fun getWeather(isRus: Boolean) {
         Thread {
             liveDataToObserver.postValue(AppState.Loading)
             sleep(2000)
-            liveDataToObserver.postValue(AppState.Success(Weather()))
+            val answer =
+                if (isRus) repository.getWeatherFromLocalStorageRus() else repository.getWeatherFromLocalStorageWorld()
+            liveDataToObserver.postValue(AppState.Success(answer))
         }
             .start()
     }
