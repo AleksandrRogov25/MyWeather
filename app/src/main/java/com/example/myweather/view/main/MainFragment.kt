@@ -18,16 +18,18 @@ class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: MainViewModel
+
+    private val viewModel: MainViewModel by lazy {
+        ViewModelProvider(this).get(MainViewModel::class.java)
+    }
 
     val adapter = MainFragmentAdapter(object : MainFragmentAdapter.OnItemViewClickListener {
         override fun onItemClick(weather: Weather) {
-            val manager = activity?.supportFragmentManager
-            if (manager != null) {
-                val bundle = Bundle()
-                bundle.putParcelable(DetailsFragment.BUNDLE_EXTRA, weather)
-                manager.beginTransaction()
-                    .add(R.id.container, DetailsFragment.newInstance(bundle))
+            activity?.supportFragmentManager?.apply {
+                beginTransaction()
+                    .add(R.id.container, DetailsFragment.newInstance(Bundle().apply {
+                        putParcelable(DetailsFragment.BUNDLE_EXTRA, weather)
+                    }))
                     .addToBackStack("")
                     .commitAllowingStateLoss()
             }
@@ -46,19 +48,21 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        with(binding) {
+            mainFragmentRecyclerView.adapter = adapter
+            mainFragmentFAB.setOnClickListener {
+                changeWeatherDataSet()
+            }
+        }
+
         val observer = Observer<AppState> {
             renderData(it)
         }
-
-        binding.mainFragmentRecyclerView.adapter = adapter
-        binding.mainFragmentFAB.setOnClickListener {
-            changeWeatherDataSet()
+        with(viewModel) {
+            getData().observe(viewLifecycleOwner, observer)
+            getWeatherRussia()
         }
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        viewModel.getData().observe(viewLifecycleOwner, observer)
-        viewModel.getWeatherRussia()
     }
-
 
     private fun renderData(data: AppState) {
         when (data) {
@@ -70,7 +74,6 @@ class MainFragment : Fragment() {
                 binding.mainFragmentLoadingLayout.visibility = View.VISIBLE
             }
             is AppState.Success -> {
-                val weatherData = data.weatherData
                 binding.mainFragmentLoadingLayout.visibility = View.GONE
                 adapter.setWeather(data.weatherData)
             }

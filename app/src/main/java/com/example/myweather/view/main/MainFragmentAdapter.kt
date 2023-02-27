@@ -3,7 +3,9 @@ package com.example.myweather.view.main
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myweather.R
 import com.example.myweather.databinding.FragmentMainRecycleItemBinding
 import com.example.myweather.model.Weather
 
@@ -22,14 +24,14 @@ class MainFragmentAdapter(private var onItemViewClickListener: OnItemViewClickLi
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
-        val binding = FragmentMainRecycleItemBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
+        return MainViewHolder(
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.fragment_main_recycle_item,
+                parent,
+                false
+            ) as View
         )
-        return MainViewHolder(binding.root)
     }
-
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         holder.bind(weatherData.get(position))
     }
@@ -38,10 +40,11 @@ class MainFragmentAdapter(private var onItemViewClickListener: OnItemViewClickLi
 
     inner class MainViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         fun bind(weather: Weather) {
-            val binding = FragmentMainRecycleItemBinding.bind(itemView)
-            binding.tvCityName.text = weather.city.city
-            binding.tvCityName.setOnClickListener {
-                onItemViewClickListener?.onItemClick(weather)
+            itemView.apply {
+                findViewById<TextView>(R.id.tvCityName).text = weather.city.city
+                setOnClickListener {
+                    onItemViewClickListener?.onItemClick(weather)
+                }
             }
         }
     }
