@@ -3,11 +3,10 @@ package com.example.myweather.view.main
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myweather.R
-import com.example.myweather.databinding.FragmentMainRecycleItemBinding
 import com.example.myweather.model.Weather
+import kotlinx.android.synthetic.main.fragment_main_recycle_item.view.*
 
 class MainFragmentAdapter(private var onItemViewClickListener: OnItemViewClickListener?) :
     RecyclerView.Adapter<MainFragmentAdapter.MainViewHolder>() {
@@ -18,7 +17,7 @@ class MainFragmentAdapter(private var onItemViewClickListener: OnItemViewClickLi
 
     private var weatherData: List<Weather> = listOf()
 
-    fun setWeather(data: List<Weather>) {
+    fun setWeather(data: Weather) {
         weatherData = data
         notifyDataSetChanged()
     }
@@ -39,13 +38,12 @@ class MainFragmentAdapter(private var onItemViewClickListener: OnItemViewClickLi
     override fun getItemCount() = weatherData.size
 
     inner class MainViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
         fun bind(weather: Weather) {
             itemView.apply {
-                findViewById<TextView>(R.id.tvCityName).text = weather.city.city
-                setOnClickListener {
-                    onItemViewClickListener?.onItemClick(weather)
+                mainFragmentRecyclerItemTextView.text = weather.city.city
+                setOnClickListener { onItemViewClickListener?.onItemClick(weather) }
                 }
             }
         }
     }
-}
