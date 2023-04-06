@@ -6,5 +6,6 @@
     <dimen name="fab_icon_size">56dp</dimen>
     <dimen name="fab_margin">15dp</dimen>
     <dimen name="city_text_size">25sp</dimen>
+    <dimen name="town_header_height">100dp</dimen>
 
 </resources>
