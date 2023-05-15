@@ -15,7 +15,6 @@ class WeatherLoader(
     private val lon: Double
 ) {
 
-
     fun loadWeather() {
 
         try {

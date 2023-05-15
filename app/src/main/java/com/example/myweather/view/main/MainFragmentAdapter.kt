@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myweather.R
-import com.example.myweather.databinding.FragmentMainRecycleItemBinding
 import com.example.myweather.model.Weather
 
 class MainFragmentAdapter(private var onItemViewClickListener: OnItemViewClickListener?) :
@@ -32,6 +31,7 @@ class MainFragmentAdapter(private var onItemViewClickListener: OnItemViewClickLi
             ) as View
         )
     }
+
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         holder.bind(weatherData.get(position))
     }
