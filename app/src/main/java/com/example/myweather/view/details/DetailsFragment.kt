@@ -10,15 +10,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import coil.ImageLoader
 import coil.decode.SvgDecoder
-import coil.load
 import coil.request.ImageRequest
-import com.bumptech.glide.Glide
-import com.example.myweather.R
 import com.example.myweather.databinding.FragmentDetailsBinding
-import com.example.myweather.model.City
 import com.example.myweather.model.Weather
-import com.example.myweather.model.WeatherAPI
-import com.example.myweather.model.WeatherDTO
 import com.example.myweather.viewmodel.DetailsState
 import com.example.myweather.viewmodel.DetailsViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -32,8 +26,6 @@ class DetailsFragment : Fragment() {
     private lateinit var weather: Weather
 
 
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,26 +34,23 @@ class DetailsFragment : Fragment() {
         return binding.root
     }
 
-        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            super.onViewCreated(view, savedInstanceState)
-            viewModel.getLiveData().observe(viewLifecycleOwner, object :Observer<DetailsState> {
-                override fun onChanged(t: DetailsState) {
-                    renderData(t)
-                }
-            })
-            arguments?.getParcelable<Weather>(BUNDLE_EXTRA) ?.let {
-                viewModel.getWeather(it.city)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.getLiveData().observe(viewLifecycleOwner, object : Observer<DetailsState> {
+            override fun onChanged(t: DetailsState) {
+                renderData(t)
             }
+        })
+        arguments?.getParcelable<Weather>(BUNDLE_EXTRA)?.let {
+            viewModel.getWeather(it.city)
+        }
 
-
-            }
-
-
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-       }
+    }
 
     companion object {
         const val BUNDLE_EXTRA = "weather"
@@ -72,26 +61,25 @@ class DetailsFragment : Fragment() {
         }
     }
 
-
-            private fun renderData(detailsState: DetailsState) {
+    private fun renderData(detailsState: DetailsState) {
         when (detailsState) {
             is DetailsState.Success -> {
                 val weather = detailsState.weather
-                with(binding){
+                with(binding) {
 
                     loadingLayout.visibility = View.GONE
                     cityName.text = weather.city.name
                     temperatureValue.text = weather.temperature.toString()
                     feelsLikeValue.text = weather.feelsLike.toString()
                     cityCoordinates.text = "${weather.city.lat} ${weather.city.lon}"
-                    Snackbar.make(mainView,"Получилось", Snackbar.LENGTH_LONG)
+                    Snackbar.make(mainView, "Получилось", Snackbar.LENGTH_LONG)
                         .show()
 
                     Picasso.get()?.load("https://freepngimg.com/thumb/city/36275-3-city-hd.png")
                         ?.into(headerIcon)
 
 
-                    icon.loadSvg ("https://yastatic.net/weather/i/icons/blueye/color/svg/${weather.icon}.svg")
+                    icon.loadSvg("https://yastatic.net/weather/i/icons/blueye/color/svg/${weather.icon}.svg")
 
                 }
 
@@ -104,6 +92,7 @@ class DetailsFragment : Fragment() {
             }
         }
     }
+
     fun ImageView.loadSvg(url: String) {
         val imageLoader = ImageLoader.Builder(this.context)
             .componentRegistry { add(SvgDecoder(this@loadSvg.context)) }
