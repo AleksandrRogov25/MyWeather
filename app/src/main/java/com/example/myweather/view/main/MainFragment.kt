@@ -1,5 +1,6 @@
 package com.example.myweather.view.main
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,8 @@ import com.example.myweather.view.details.DetailsFragment
 import com.example.myweather.viewmodel.AppState
 import com.example.myweather.viewmodel.MainViewModel
 
+private const val IS_WORLD_KEY = "LIST_OF_TOWNS_KEY"
+
 class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
@@ -23,7 +26,7 @@ class MainFragment : Fragment() {
         ViewModelProvider(this).get(MainViewModel::class.java)
     }
 
-    val adapter = MainFragmentAdapter(object : MainFragmentAdapter.OnItemViewClickListener {
+    private val adapter = MainFragmentAdapter(object : MainFragmentAdapter.OnItemViewClickListener {
         override fun onItemClick(weather: Weather) {
             activity?.supportFragmentManager?.apply {
                 beginTransaction()
@@ -62,6 +65,7 @@ class MainFragment : Fragment() {
             getData().observe(viewLifecycleOwner, observer)
             getWeatherRussia()
         }
+        showListOfTowns()
     }
 
     private fun renderData(data: AppState) {
@@ -76,6 +80,23 @@ class MainFragment : Fragment() {
             is AppState.Success -> {
                 binding.mainFragmentLoadingLayout.visibility = View.GONE
                 adapter.setWeather(data.weatherData)
+            }
+        }
+    }
+
+    private fun showListOfTowns() {
+        activity?.let {
+            if (it.getPreferences(Context.MODE_PRIVATE)
+                    .getBoolean(IS_WORLD_KEY, false)
+            ) changeWeatherDataSet() else viewModel.getWeatherRussia()
+        }
+    }
+
+    private fun saveListOfTowns() {
+        activity?.let {
+            with(it.getPreferences(Context.MODE_PRIVATE).edit()) {
+                putBoolean(IS_WORLD_KEY, !isDataSetRus)
+                apply()
             }
         }
     }
@@ -100,6 +121,6 @@ class MainFragment : Fragment() {
             binding.mainFragmentFAB.setImageResource(R.drawable.ic_russia)
         }
         isDataSetRus = !isDataSetRus
-
+        saveListOfTowns()
     }
 }

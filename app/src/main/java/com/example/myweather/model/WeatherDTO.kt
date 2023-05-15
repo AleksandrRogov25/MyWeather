@@ -5,8 +5,8 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class WeatherDTO(
-    val fact: FactDTO?
-):Parcelable
+    val fact: FactDTO
+) : Parcelable
 
 
 fun convertDtoToModel(weatherDTO: WeatherDTO): Weather {

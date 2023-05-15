@@ -1,30 +1,30 @@
 package com.example.myweather.view.details
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.myweather.R
+import coil.ImageLoader
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 import com.example.myweather.databinding.FragmentDetailsBinding
 import com.example.myweather.model.Weather
-import com.example.myweather.utils.showSnackBar
-import com.example.myweather.viewmodel.AppState
+import com.example.myweather.viewmodel.DetailsState
 import com.example.myweather.viewmodel.DetailsViewModel
+import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
-import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 
 
-@Suppress("DEPRECATION")
-class  DetailsFragment : Fragment() {
-
+class DetailsFragment : Fragment() {
     private var _binding: FragmentDetailsBinding? = null
     private val binding get() = _binding!!
-    private lateinit var weatherBundle: Weather
     private val viewModel: DetailsViewModel by lazy { ViewModelProvider(this).get(DetailsViewModel::class.java) }
+    private lateinit var weather: Weather
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,64 +36,15 @@ class  DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        weatherBundle = arguments?.getParcelable(BUNDLE_EXTRA) ?: Weather()
-        viewModel.getLiveData().observe(viewLifecycleOwner, Observer { renderData(it) })
-        viewModel.getWeatherFromRemoteSource(weatherBundle.city.lat, weatherBundle.city.lon)
-    }
-
-    private fun renderData(appState: AppState) {
-        when (appState) {
-            is AppState.Success -> {
-                binding.mainView.visibility = View.VISIBLE
-                binding.loadingLayout.visibility = View.GONE
-                setWeather(appState.weatherData)
+        viewModel.getLiveData().observe(viewLifecycleOwner, object : Observer<DetailsState> {
+            override fun onChanged(t: DetailsState) {
+                renderData(t)
             }
-            is AppState.Loading -> {
-                binding.mainView.visibility = View.GONE
-                binding.loadingLayout.visibility = View.VISIBLE
-            }
-            is AppState.Error -> {
-                binding.mainView.visibility = View.VISIBLE
-                binding.loadingLayout.visibility = View.GONE
-                binding.mainView.showSnackBar(
-                    getString(R.string.error),
-                    getString(R.string.reload)
-                ) {
-                    viewModel.getWeatherFromRemoteSource(
-                        weatherBundle.city.lat,
-                        weatherBundle.city.lon
-                    )
-                }
-            }
+        })
+        arguments?.getParcelable<Weather>(BUNDLE_EXTRA)?.let {
+            viewModel.getWeather(it.city)
         }
-    }
 
-    private fun setWeather(weather: Weather) {
-        with(binding) {
-            val city = weatherBundle.city
-            cityName.text = city.city
-            cityCoordinates.text = String.format(
-                getString(R.string.city_coordinates),
-                city.lat.toString(),
-                city.lon.toString()
-            )
-
-            weather.icon?.let {
-                GlideToVectorYou.justLoadImage(
-                    activity,
-                    Uri.parse("https://yastatic.net/weather/i/icons/blueye/color/svg/${it}.svg"),
-                    weatherIcon
-                )
-                temperatureValue.text = weather.temperature.toString()
-                feelsLikeValue.text = weather.feelsLike.toString()
-                weatherCondition.text = weather.condition
-            }
-
-            Picasso
-                .get()
-                .load("https://freepngimg.com/thumb/city/36275-3-city-hd.png")
-                .into(headerIcon)
-        }
     }
 
     override fun onDestroyView() {
@@ -110,5 +61,51 @@ class  DetailsFragment : Fragment() {
             fragment.arguments = bundle
             return fragment
         }
+    }
+
+    private fun renderData(detailsState: DetailsState) {
+        when (detailsState) {
+            is DetailsState.Success -> {
+                val weather = detailsState.weather
+                with(binding) {
+
+                    loadingLayout.visibility = View.GONE
+                    cityName.text = weather.city.name
+                    temperatureValue.text = weather.temperature.toString()
+                    feelsLikeValue.text = weather.feelsLike.toString()
+                    cityCoordinates.text = "${weather.city.lat} ${weather.city.lon}"
+                    Snackbar.make(mainView, "Получилось", Snackbar.LENGTH_LONG)
+                        .show()
+
+                    Picasso.get()?.load("https://freepngimg.com/thumb/city/36275-3-city-hd.png")
+                        ?.into(headerIcon)
+
+
+                    icon.loadSvg("https://yastatic.net/weather/i/icons/blueye/color/svg/${weather.icon}.svg")
+
+                }
+
+
+            }
+            is DetailsState.Loading -> {
+            }
+            is DetailsState.Error -> {
+
+            }
+        }
+    }
+
+    fun ImageView.loadSvg(url: String) {
+        val imageLoader = ImageLoader.Builder(this.context)
+            .componentRegistry { add(SvgDecoder(this@loadSvg.context)) }
+            .build()
+
+        val request = ImageRequest.Builder(this.context)
+            .crossfade(true)
+            .crossfade(500)
+            .data(url)
+            .target(this)
+            .build()
+        imageLoader.enqueue(request)
     }
 }

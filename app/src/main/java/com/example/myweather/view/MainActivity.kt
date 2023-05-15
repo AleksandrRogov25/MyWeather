@@ -1,10 +1,15 @@
 package com.example.myweather.view
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import com.example.myweather.MyApp
 import com.example.myweather.R
 import com.example.myweather.databinding.ActivityMainBinding
+import com.example.myweather.view.history.HistoryFragment
 import com.example.myweather.view.main.MainFragment
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -20,5 +25,24 @@ class MainActivity : AppCompatActivity() {
                 .replace(R.id.container, MainFragment.newInstance())
                 .commit()
         }
+        MyApp.getHistoryDao().getAll()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_history -> {
+                supportFragmentManager.beginTransaction()
+                    .add(R.id.container, HistoryFragment.newInstance())
+                    .addToBackStack("")
+                    .commit()
+            }
+
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

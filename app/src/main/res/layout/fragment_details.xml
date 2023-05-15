@@ -20,19 +20,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+
+        <TextView
             android:id="@+id/cityName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/city_name_margin_top"
-            android:textSize="@dimen/city_name_text_size"
+            android:textSize="35sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/headerIcon"
-            tools:text="Москва" />
+            app:layout_constraintTop_toBottomOf="@+id/headerIcon" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+
+        <TextView
             android:id="@+id/cityCoordinates"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -43,26 +44,16 @@
             tools:text="lt/ln: 55.755826, 37.617299900000035" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/weatherIcon"
-            android:layout_width="@dimen/weather_icon_width"
-            android:layout_height="@dimen/weather_icon_height"
-            android:layout_marginTop="@dimen/margin_15_dp"
+            android:id="@+id/icon"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/town_header_height"
+            android:scaleType="centerInside"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cityCoordinates"
-            tools:srcCompat="@drawable/ic_bkn_d" />
+            app:layout_constraintTop_toBottomOf="@+id/cityCoordinates" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/weatherCondition"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/weather_icon_margin"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/weatherIcon"
-            tools:text="Облачно" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/temperatureLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -70,7 +61,7 @@
             android:text="@string/temperature_label"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/weatherCondition" />
+            app:layout_constraintTop_toBottomOf="@+id/icon" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/temperatureValue"
@@ -104,22 +95,25 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/feelsLikeLabel"
-            tools:text="-23" />
+            tools:text="Облачно" />
+
+        <FrameLayout
+            android:id="@+id/loadingLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/loadingBackground"
+            android:visibility="gone"
+            tools:layout_editor_absoluteX="83dp"
+            tools:layout_editor_absoluteY="215dp"
+            tools:visibility="visible">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+        </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <FrameLayout
-        android:id="@+id/loadingLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/loadingBackground"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <ProgressBar
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" />
-    </FrameLayout>
 </FrameLayout>
 
