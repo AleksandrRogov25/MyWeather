@@ -1,0 +1,2 @@
+com.github.twocoffeesoneteam.glidetovectoryou
+string app_name
