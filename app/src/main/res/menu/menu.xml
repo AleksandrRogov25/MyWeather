@@ -7,5 +7,9 @@
         android:icon="@drawable/ic_history"
         android:title="@string/menu_title_history"
         app:showAsAction="always" />
-
+    <item
+        android:id="@+id/menu_content_provider"
+        android:icon="@drawable/ic_content"
+        android:title="@string/menu_content_provider"
+        app:showAsAction="always" />
 </menu>
