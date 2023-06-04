@@ -6,4 +6,5 @@
     <string name="error">Error</string>
     <string name="reload">Reload</string>
     <string name="menu_title_history">History</string>
+    <string name="menu_content_provider">content_provider</string>
 </resources>
